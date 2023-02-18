@@ -2,6 +2,7 @@ import Header from "./Header";
 import illustration1 from '../public/undraw_digital_currency_qpak.svg'
 import illustration2 from '../public/undraw_vault_re_s4my.svg'
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Create(){
     return(
@@ -14,7 +15,7 @@ export default function Create(){
           <h2 className="card-title text-center text-white">Multi-Sig Wallet</h2>
           <p></p>
           <div className="card-actions">
-            <button className="btn bg-white text-blue">Create</button>
+            <Link href="/profile1"><button className="btn bg-white text-blue">Create</button></Link>
           </div>
         </div>
       </div>
@@ -24,7 +25,7 @@ export default function Create(){
           <h2 className="card-title text-white">Normal Wallet</h2>
           <p></p>
           <div className="card-actions">
-            <button className="btn bg-white text-blue">Create</button>
+            <Link href="/profile2"><button className="btn bg-white text-blue">Create</button></Link>
           </div>
         </div>
       </div>
