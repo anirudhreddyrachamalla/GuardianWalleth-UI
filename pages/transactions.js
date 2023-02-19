@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-function SearchInput() {
+function SearchInput({parentState}) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
     const [searchValue, setSearchValue] = useState('');

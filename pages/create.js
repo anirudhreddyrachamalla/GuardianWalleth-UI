@@ -3,7 +3,7 @@ import illustration2 from '../public/undraw_vault_re_s4my.svg'
 import Image from "next/image";
 import Link from "next/link";
 
-export default function Create(){
+export default function Create({parentState}){
     return(
         <>
         <div className="flex gap-x-4 p-10 text-center">

@@ -1,5 +1,7 @@
-export default function Dashboard(){
+export default function Dashboard({parentState}){
+   console.log(parentState.user);
     return(
+      
         <>
 <div>
    <nav class="bg-white dark:bg-black border-b border-gray-200 fixed z-30 w-full">

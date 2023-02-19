@@ -91,7 +91,7 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
-export default function Home() {
+export default function Home({parentState}) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const {theme, setTheme} = useTheme()
 
