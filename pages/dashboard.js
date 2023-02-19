@@ -1,13 +1,99 @@
-export default function Dashboard({parentState}){
-   console.log(parentState.user);
+import Link from "next/link"
+import { useState } from "react"
+import ApproveTransactions from "../components/partials/approveTransactions";
+import Transactions from "../components/partials/transactions";
+import WeButton from "../components/WeButton"
+export default function Dashboard(parentState){
+   const txInitialState = {
+      receiver: "",
+      amount: "",
+      token:"usdc",
+   };
+   const [showInitTx, setShowInitTx] = useState(false);
+   const [showTranferToken, setShowTransferToken] = useState(false);
+   const [showPublish, setShowPublish] = useState(false);
+   const [transaction, setTransaction] = useState(txInitialState);
+   const handleInitTx = () =>{
+      setShowInitTx(true);
+   }
+
+   const handleTransferToken = () =>{
+      setShowTransferToken(true);
+   }
+
+   const handleCancel = () =>{
+      setTransaction(txInitialState);
+      setShowInitTx(false);
+      setShowTransferToken(false);
+   }
+   
+   const handleTokenSubmit = () =>{
+
+   }
+
+   const handleTokenPublish = () =>{
+
+   }
+
+   const handleSubmit = async() =>{
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner();
+      const contract = new ethers.Contract(
+        contractAddress,
+        contract_abi,
+        signer
+      );
+      try {
+      await contract.initiateTransaction(transaction.receiver, utils.parseEther(transaction.amount).toString(10), "0x");
+      setLoading(true);
+      } catch (error) {
+        console.log(error);
+        toast.error(error.reason);
+      }
+      contract.once(contract.filters.TransactionStatus(), (from, txnId, confirmationsDone, confirmationsRequired) => {
+        console.log(from, txnId, confirmationsDone, confirmationsRequired);
+        setTransactionIndex(txnId);
+        setShowPublish(true);
+          setLoading(false);
+          toast.success(`Transaction with ${txnId} is created and ${confirmationsDone} done and ${confirmationsRequired} required`);
+      });
+    }
+  
+    const handlePublish = async() =>{
+      setLoading(true);
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner();
+      const contract = new ethers.Contract(
+        contractAddress,
+        contract_abi,
+        signer
+      );
+      try {
+      await contract.publishTransaction(transactionIndex);
+      } catch (error) {
+        console.log(error.reason);
+        toast.error(error.reason);
+        setLoading(false);
+      }
+      contract.once(contract.filters.TransactionCompleted(), (from, txnId) => {
+        console.log(from, txnId);
+          setLoading(false);
+          toast.success(`Transaction from ${from} with transaction id ${txnId} is published`);
+      });
+    }
+
+    const onChangeToken = (e) =>{
+      setTransaction({...transaction, token: e.target.value});
+    }
+
     return(
       
         <>
 <div>
    <nav class="bg-white dark:bg-black border-b border-gray-200 fixed z-30 w-full">
    </nav>
-   <div class="flex overflow-hidden bg-white dark:bg-black pt-16">
-      <aside id="sidebar" class="fixed hidden z-20 h-full top-0 left-0 pt-16 flex lg:flex flex-shrink-0 flex-col w-64 transition-width duration-75" aria-label="Sidebar">
+   <div class="flex overflow-hidden bg-white dark:bg-black pt-24">
+      <aside id="sidebar" class="fixed hidden z-20 h-full top-0 left-0 pt-24 flex lg:flex flex-shrink-0 flex-col w-64 transition-width duration-75" aria-label="Sidebar">
          <div class="relative flex-1 flex flex-col min-h-0 border-r border-gray-200 bg-white dark:bg-black pt-0">
             <div class="flex-1 flex flex-col pt-5 pb-4 overflow-y-auto">
                <div class="flex-1 px-3 bg-white dark:bg-black divide-y space-y-1 mt-8">
@@ -26,22 +112,22 @@ export default function Dashboard({parentState}){
                         </form>
                      </li>
                      <li>
-                        <a href="#" class="text-base text-gray-900 dark:text-white font-normal rounded-lg flex items-center p-2 hover:bg-gray-100 group">
+                        <Link href="/dashboard" class="text-base text-gray-900 dark:text-white font-normal rounded-lg flex items-center p-2 hover:bg-gray-100 group">
                            <svg class="w-6 h-6 text-gray-900 dark:text-white group-hover:text-gray-900 dark:text-white transition duration-75" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                               <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"></path>
                               <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"></path>
                            </svg>
                            <span class="ml-3">Dashboard</span>
-                        </a>
+                        </Link>
                      </li>
                      <li>
-                        <a href="#" target="_blank" class="text-base text-gray-900 dark:text-white font-normal rounded-lg hover:bg-gray-100 flex items-center p-2 group ">
+                        <Link href="/assets"  class="text-base text-gray-900 dark:text-white font-normal rounded-lg hover:bg-gray-100 flex items-center p-2 group ">
                            <svg class="w-6 h-6 text-gray-900 dark:text-white flex-shrink-0 group-hover:text-gray-900 dark:text-white transition duration-75" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                               <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
                            </svg>
                            <span class="ml-3 flex-1 whitespace-nowrap">Assets</span>
                           
-                        </a>
+                        </Link>
                      </li>
                      <li>
                         <a href="#" target="_blank" class="text-base text-gray-900 dark:text-white dark:bg-blue font-normal rounded-lg hover:bg-gray-100 flex items-center p-2 group ">
@@ -102,373 +188,130 @@ export default function Dashboard({parentState}){
          <main>
             <div class="pt-6 px-4 bg-white dark:bg-black">
                <div class="w-full grid grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 gap-4">
-                  <div class="dark:bg-black bg-white dark:bg-black shadow rounded-lg p-4 sm:p-6 xl:p-8  2xl:col-span-2">
-                     <div class="flex items-center justify-between mb-4">
-                        <div class="flex-shrink-0">
-                           <span class="text-2xl sm:text-3xl leading-none font-bold text-gray-900 dark:text-white">$45,385</span>
-                           <h3 class="text-base font-normal text-gray-900 dark:text-white">Sales this week</h3>
-                        </div>
-                        <div class="flex items-center justify-end flex-1 text-green-500 text-base font-bold">
-                           12.5%
-                           <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                              <path fill-rule="evenodd" d="M5.293 7.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L6.707 7.707a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
-                           </svg>
-                        </div>
-                     </div>
-                     <div id="main-chart"></div>
+                  <div class="bg-white dark:bg-black shadow rounded-lg p-4 sm:p-6 xl:p-8  2xl:col-span-2">
+                    {(!showInitTx && !showTranferToken) && <div className="flex justify-between">
+                     <WeButton label="Initiate Transaction" clickHandler={handleInitTx}/>
+                     <WeButton label="Transfer Token" clickHandler={handleTransferToken}/>
+                     </div>}
+                               {
+                                  showInitTx &&
+                                  <div className="mt-2">
+                                     <div className=" mb-4 md:mr-2 md:mb-0">
+                                        <label
+                                           className="block mb-2 md:text-sm sm:text-xs text-text-color"
+                                           htmlFor="receiver"
+                                        >
+                                           Receiver Address
+                                        </label>
+                                        <input
+                                           onChange={(e) => setTransaction({ ...transaction, receiver: e.target.value })}
+                                           className="w-full px-3 py-2 md:text-sm sm:text-xs leading-tight text-text-color bg-primary-color border border-gray-500 sm:h-10 rounded-lg shadow appearance-none focus:outline-none focus:shadow-outline"
+                                           id="receiver"
+                                           type="text"
+                                           placeholder="Address"
+                                           required
+                                          //  disabled={showPublish}
+                                        />
+                                     </div>
+                                     <div className=" mt-4 md:mr-2 md:mb-0">
+                                        <label
+                                           className="block mb-2 md:text-sm sm:text-xs text-text-color"
+                                           htmlFor="amount"
+                                        >
+                                           Amount
+                                        </label>
+                                        <input
+                                           onChange={(e) => setTransaction({ ...transaction, amount: (e.target.value) })}
+                                           className="w-full px-3 py-2 md:text-sm sm:text-xs leading-tight text-text-color bg-primary-color border border-gray-500 sm:h-10 rounded-lg shadow appearance-none focus:outline-none focus:shadow-outline"
+                                           id="amount"
+                                           type="text"
+                                           placeholder="ether"
+                                           required
+                                          //  disabled={showPublish}
+                                        />
+                                     </div>
+                                        <div className="col-span-2 mt-4 flex justify-between">
+
+                                           {!showPublish && <WeButton clickHandler={handleSubmit} type="button" label="Submit" classes={" py-1 px-2 text-sm float-right  text-black rounded border-2 border-blue-400"} />}
+
+                                           {showPublish && <WeButton clickHandler={handlePublish} type="button" label="Publish Transaction" classes={" py-1 px-2 text-sm float-right  text-black rounded border-2 border-blue-400"} />}
+                                           <WeButton clickHandler={handleCancel} type="button" label="Cancel" classes={" py-1 px-2 text-sm float-right  text-black rounded border-2 border-blue-400"} />
+                                        </div>
+                                  </div>
+                               }
+
+                               {
+                                 showTranferToken &&
+                                 <div className="mt-2">
+                                    <div className=" mb-4 md:mr-2 md:mb-0">
+                                        <label
+                                           className="block mb-2 md:text-sm sm:text-xs text-text-color"
+                                           htmlFor="receiver"
+                                        >
+                                           Token
+                                        </label>
+                                        <select 
+                                        className="w-full px-3 py-2 md:text-sm sm:text-xs leading-tight text-text-color bg-primary-color border border-gray-500 sm:h-10 rounded-lg shadow  focus:outline-none focus:shadow-outline"
+                                        value={transaction.token}
+                                        onChange={onChangeToken}
+                                        >
+                                          <option value="usdc">usdc</option>   
+                                          <option value="weth">weth</option>   
+                                          <option value="geth">geth</option>   
+                                          <option value="loot">loot</option>   
+                                          <option value="tooth">tooth</option>   
+
+                                       </select>
+                                     </div>
+                                     <div className=" my-4 md:mr-2 md:mb-0">
+                                        <label
+                                           className="block mb-2 md:text-sm sm:text-xs text-text-color"
+                                           htmlFor="receiver"
+                                        >
+                                           Receiver Address
+                                        </label>
+                                        <input
+                                           onChange={(e) => setTransaction({ ...transaction, receiver: e.target.value })}
+                                           className="w-full px-3 py-2 md:text-sm sm:text-xs leading-tight text-text-color bg-primary-color border border-gray-500 sm:h-10 rounded-lg shadow appearance-none focus:outline-none focus:shadow-outline"
+                                           id="receiver"
+                                           type="text"
+                                           placeholder="Address"
+                                           required
+                                          //  disabled={showPublish}
+                                        />
+                                     </div>
+                                     <div className=" mt-4 md:mr-2 md:mb-0">
+                                        <label
+                                           className="block mb-2 md:text-sm sm:text-xs text-text-color"
+                                           htmlFor="amount"
+                                        >
+                                           Amount
+                                        </label>
+                                        <input
+                                           onChange={(e) => setTransaction({ ...transaction, amount: (e.target.value) })}
+                                           className="w-full px-3 py-2 md:text-sm sm:text-xs leading-tight text-text-color bg-primary-color border border-gray-500 sm:h-10 rounded-lg shadow appearance-none focus:outline-none focus:shadow-outline"
+                                           id="amount"
+                                           type="text"
+                                           placeholder="number of tokens"
+                                           required
+                                          //  disabled={showPublish}
+                                        />
+                                     </div>
+                                        <div className="col-span-2 mt-4 flex justify-between">
+
+                                           {!showPublish && <WeButton clickHandler={handleTokenSubmit} type="button" label="Submit" classes={" py-1 px-2 text-sm float-right  text-black rounded border-2 border-blue-400"} />}
+
+                                           {showPublish && <WeButton clickHandler={handleTokenPublish} type="button" label="Publish Transaction" classes={" py-1 px-2 text-sm float-right  text-black rounded border-2 border-blue-400"} />}
+                                           <WeButton clickHandler={handleCancel} type="button" label="Cancel" classes={" py-1 px-2 text-sm float-right  text-black rounded border-2 border-blue-400"} />
+                                        </div>
+                                 </div>
+                               }
+
+                     <ApproveTransactions />
                   </div>
-                  <div class="bg-white dark:bg-black shadow rounded-lg p-4 sm:p-6 xl:p-8 ">
-                     <div class="mb-4 flex items-center justify-between">
-                        <div>
-                           <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">Latest Transactions</h3>
-                           <span class="text-base font-normal text-gray-900 dark:text-white">This is a list of latest transactions</span>
-                        </div>
-                        <div class="flex-shrink-0">
-                           <a href="#" class="text-sm font-medium text-cyan-600 hover:bg-gray-100 rounded-lg p-2">View all</a>
-                        </div>
-                     </div>
-                     <div class="flex flex-col mt-8">
-                        <div class="overflow-x-auto rounded-lg">
-                           <div class="align-middle inline-block min-w-full">
-                              <div class="shadow overflow-hidden sm:rounded-lg">
-                                 <table class="min-w-full divide-y divide-gray-200 dark:border-2 dark:border-blue">
-                                    <thead class="bg-gray-50 dark:bg-blue">
-                                       <tr>
-                                          <th scope="col" class="p-4 text-left text-xs font-medium text-gray-900 dark:text-white uppercase tracking-wider">
-                                             Transaction
-                                          </th>
-                                          <th scope="col" class="p-4 text-left text-xs font-medium text-gray-900 dark:text-white uppercase tracking-wider">
-                                             Date & Time
-                                          </th>
-                                          <th scope="col" class="p-4 text-left text-xs font-medium text-gray-900 dark:text-white uppercase tracking-wider">
-                                             Amount
-                                          </th>
-                                       </tr>
-                                    </thead>
-                                    <tbody class="bg-white dark:bg-black">
-                                       
-                                       <tr class="bg-gray-50 dark:bg-black">
-                                          <td class="p-4 whitespace-nowrap text-sm font-normal text-gray-900 dark:text-white rounded-lg rounded-left">
-                                             Payment refund to <span class="font-semibold">#00910</span>
-                                          </td>
-                                          <td class="p-4 whitespace-nowrap text-sm font-normal text-gray-900 dark:text-white">
-                                             Apr 23 ,2021
-                                          </td>
-                                          <td class="p-4 whitespace-nowrap text-sm font-semibold text-gray-900 dark:text-white">
-                                             -$670
-                                          </td>
-                                       </tr>
-                                       <tr>
-                                          <td class="p-4 whitespace-nowrap text-sm font-normal text-gray-900 dark:text-white">
-                                             Payment failed from <span class="font-semibold">#087651</span>
-                                          </td>
-                                          <td class="p-4 whitespace-nowrap text-sm font-normal text-gray-900 dark:text-white">
-                                             Apr 18 ,2021
-                                          </td>
-                                          <td class="p-4 whitespace-nowrap text-sm font-semibold text-gray-900 dark:text-white">
-                                             $234
-                                          </td>
-                                       </tr>
-                                       <tr class="bg-gray-50 dark:bg-black">
-                                          <td class="p-4 whitespace-nowrap text-sm font-normal text-gray-900 dark:text-white rounded-lg rounded-left">
-                                             Payment from <span class="font-semibold">Lana Byrd</span>
-                                          </td>
-                                          <td class="p-4 whitespace-nowrap text-sm font-normal text-gray-900 dark:text-white">
-                                             Apr 15 ,2021
-                                          </td>
-                                          <td class="p-4 whitespace-nowrap text-sm font-semibold text-gray-900 dark:text-white">
-                                             $5000
-                                          </td>
-                                       </tr>
-                                       <tr>
-                                          <td class="p-4 whitespace-nowrap text-sm font-normal text-gray-900 dark:text-white">
-                                             Payment from <span class="font-semibold">Jese Leos</span>
-                                          </td>
-                                          <td class="p-4 whitespace-nowrap text-sm font-normal text-gray-900 dark:text-white">
-                                             Apr 15 ,2021
-                                          </td>
-                                          <td class="p-4 whitespace-nowrap text-sm font-semibold text-gray-900 dark:text-white">
-                                             $2300
-                                          </td>
-                                       </tr>
-                                       <tr class="bg-gray-50 dark:bg-black">
-                                          <td class="p-4 whitespace-nowrap text-sm font-normal text-gray-900 dark:text-white rounded-lg rounded-left">
-                                             Payment from <span class="font-semibold">THEMESBERG LLC</span>
-                                          </td>
-                                          <td class="p-4 whitespace-nowrap text-sm font-normal text-gray-900 dark:text-white">
-                                             Apr 11 ,2021
-                                          </td>
-                                          <td class="p-4 whitespace-nowrap text-sm font-semibold text-gray-900 dark:text-white">
-                                             $560
-                                          </td>
-                                       </tr>
-                                       <tr>
-                                          <td class="p-4 whitespace-nowrap text-sm font-normal text-gray-900 dark:text-white">
-                                             Payment from <span class="font-semibold">Lana Lysle</span>
-                                          </td>
-                                          <td class="p-4 whitespace-nowrap text-sm font-normal text-gray-900 dark:text-white">
-                                             Apr 6 ,2021
-                                          </td>
-                                          <td class="p-4 whitespace-nowrap text-sm font-semibold text-gray-900 dark:text-white">
-                                             $1437
-                                          </td>
-                                       </tr>
-                                    </tbody>
-                                 </table>
-                              </div>
-                           </div>
-                        </div>
-                     </div>
-                  </div>
+                  <Transactions />
                </div>
-               <div class="mt-4 w-full grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-                  <div class="bg-white dark:bg-black shadow rounded-lg p-4 sm:p-6 xl:p-8 ">
-                     <div class="flex items-center">
-                        <div class="flex-shrink-0">
-                           <span class="text-2xl sm:text-3xl leading-none font-bold text-gray-900 dark:text-white">2,340</span>
-                           <h3 class="text-base font-normal text-gray-900 dark:text-white">New products this week</h3>
-                        </div>
-                        <div class="ml-5 w-0 flex items-center justify-end flex-1 text-green-500 text-base font-bold">
-                           14.6%
-                           <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                              <path fill-rule="evenodd" d="M5.293 7.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L6.707 7.707a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
-                           </svg>
-                        </div>
-                     </div>
-                  </div>
-                  <div class="bg-white dark:bg-black shadow rounded-lg p-4 sm:p-6 xl:p-8 ">
-                     <div class="flex items-center">
-                        <div class="flex-shrink-0">
-                           <span class="text-2xl sm:text-3xl leading-none font-bold text-gray-900 dark:text-white">5,355</span>
-                           <h3 class="text-base font-normal text-gray-900 dark:text-white">Visitors this week</h3>
-                        </div>
-                        <div class="ml-5 w-0 flex items-center justify-end flex-1 text-green-500 text-base font-bold">
-                           32.9%
-                           <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                              <path fill-rule="evenodd" d="M5.293 7.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L6.707 7.707a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
-                           </svg>
-                        </div>
-                     </div>
-                  </div>
-                  <div class="bg-white dark:bg-black shadow rounded-lg p-4 sm:p-6 xl:p-8 ">
-                     <div class="flex items-center">
-                        <div class="flex-shrink-0">
-                           <span class="text-2xl sm:text-3xl leading-none font-bold text-gray-900 dark:text-white">385</span>
-                           <h3 class="text-base font-normal text-gray-900 dark:text-white">User signups this week</h3>
-                        </div>
-                        <div class="ml-5 w-0 flex items-center justify-end flex-1 text-red-500 text-base font-bold">
-                           -2.7%
-                           <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                              <path fill-rule="evenodd" d="M14.707 12.293a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 111.414-1.414L9 14.586V3a1 1 0 012 0v11.586l2.293-2.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                           </svg>
-                        </div>
-                     </div>
-                  </div>
-               </div>
-               <div class="grid grid-cols-1 2xl:grid-cols-2 xl:gap-4 my-4">
-                  <div class="bg-white dark:bg-black shadow rounded-lg mb-4 p-4 sm:p-6 h-full">
-                     <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-xl font-bold leading-none text-gray-900 dark:text-white">Latest Customers</h3>
-                        <a href="#" class="text-sm font-medium text-cyan-600 hover:bg-gray-100 rounded-lg inline-flex items-center p-2">
-                        View all
-                        </a>
-                     </div>
-                     <div class="flow-root">
-                        <ul role="list" class="divide-y divide-gray-200">
-                           <li class="py-3 sm:py-4">
-                              <div class="flex items-center space-x-4">
-                                 <div class="flex-shrink-0">
-                                    <img class="h-8 w-8 rounded-full" src="https://demo.themesberg.com/windster/images/users/neil-sims.png" alt="Neil image" />
-                                 </div>
-                                 <div class="flex-1 min-w-0">
-                                    <p class="text-sm font-medium text-gray-900 dark:text-white truncate">
-                                       Neil Sims
-                                    </p>
-                                    <div class="text-sm text-gray-900 dark:text-white truncate">
-                                       <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="17727a767e7b57607e7973646372653974787a">[email&#160;protected]</a>
-                                    </div>
-                                 </div>
-                                 <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                                    $320
-                                 </div>
-                              </div>
-                           </li>
-                           <li class="py-3 sm:py-4">
-                              <div class="flex items-center space-x-4">
-                                 <div class="flex-shrink-0">
-                                    <img class="h-8 w-8 rounded-full" src="https://demo.themesberg.com/windster/images/users/bonnie-green.png" alt="Neil image" />
-                                 </div>
-                                 <div class="flex-1 min-w-0">
-                                    <p class="text-sm font-medium text-gray-900 dark:text-white truncate">
-                                       Bonnie Green
-                                    </p>
-                                    <div class="text-sm text-gray-900 dark:text-white truncate">
-                                       <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="d4b1b9b5bdb894a3bdbab0a7a0b1a6fab7bbb9">[email&#160;protected]</a>
-                                    </div>
-                                 </div>
-                                 <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                                    $3467
-                                 </div>
-                              </div>
-                           </li>
-                           <li class="py-3 sm:py-4">
-                              <div class="flex items-center space-x-4">
-                                 <div class="flex-shrink-0">
-                                    <img class="h-8 w-8 rounded-full" src="https://demo.themesberg.com/windster/images/users/michael-gough.png" alt="Neil image" />
-                                 </div>
-                                 <div class="flex-1 min-w-0">
-                                    <p class="text-sm font-medium text-gray-900 dark:text-white truncate">
-                                       Michael Gough
-                                    </p>
-                                    <div class="text-sm text-gray-900 dark:text-white truncate">
-                                       <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="57323a363e3b17203e3933242332257934383a">[email&#160;protected]</a>
-                                    </div>
-                                 </div>
-                                 <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                                    $67
-                                 </div>
-                              </div>
-                           </li>
-                           <li class="py-3 sm:py-4">
-                              <div class="flex items-center space-x-4">
-                                 <div class="flex-shrink-0">
-                                    <img class="h-8 w-8 rounded-full" src="https://demo.themesberg.com/windster/images/users/thomas-lean.png" alt="Neil image" />
-                                 </div>
-                                 <div class="flex-1 min-w-0">
-                                    <p class="text-sm font-medium text-gray-900 dark:text-white truncate">
-                                       Thomes Lean
-                                    </p>
-                                    <div class="text-sm text-gray-900 dark:text-white truncate">
-                                       <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="284d45494144685f41464c5b5c4d5a064b4745">[email&#160;protected]</a>
-                                    </div>
-                                 </div>
-                                 <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                                    $2367
-                                 </div>
-                              </div>
-                           </li>
-                           <li class="pt-3 sm:pt-4 pb-0">
-                              <div class="flex items-center space-x-4">
-                                 <div class="flex-shrink-0">
-                                    <img class="h-8 w-8 rounded-full" src="https://demo.themesberg.com/windster/images/users/lana-byrd.png" alt="Neil image" />
-                                 </div>
-                                 <div class="flex-1 min-w-0">
-                                    <p class="text-sm font-medium text-gray-900 dark:text-white truncate">
-                                       Lana Byrd
-                                    </p>
-                                    <div class="text-sm text-gray-900 dark:text-white truncate">
-                                       <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="a2c7cfc3cbcee2d5cbccc6d1d6c7d08cc1cdcf">[email&#160;protected]</a>
-                                    </div>
-                                 </div>
-                                 <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                                    $367
-                                 </div>
-                              </div>
-                           </li>
-                        </ul>
-                     </div>
-                  </div>
-                  <div class="bg-white dark:bg-black shadow rounded-lg p-4 sm:p-6 xl:p-8 ">
-                     <h3 class="text-xl leading-none font-bold text-gray-900 dark:text-white mb-10">Acquisition Overview</h3>
-                     <div class="block w-full overflow-x-auto">
-                        <table class="items-center w-full bg-transparent border-collapse">
-                           <thead>
-                              <tr>
-                                 <th class="px-4 bg-gray-50 dark:bg-black text-gray-700 align-middle py-3 text-xs font-semibold text-left uppercase border-l-0 border-r-0 whitespace-nowrap">Top Channels</th>
-                                 <th class="px-4 bg-gray-50 dark:bg-black text-gray-700 align-middle py-3 text-xs font-semibold text-left uppercase border-l-0 border-r-0 whitespace-nowrap">Users</th>
-                                 <th class="px-4 bg-gray-50 dark:bg-black text-gray-700 align-middle py-3 text-xs font-semibold text-left uppercase border-l-0 border-r-0 whitespace-nowrap min-w-140-px"></th>
-                              </tr>
-                           </thead>
-                           <tbody class="divide-y divide-gray-100">
-                              <tr class="text-gray-900 dark:text-white">
-                                 <th class="border-t-0 px-4 align-middle text-sm font-normal whitespace-nowrap p-4 text-left">Organic Search</th>
-                                 <td class="border-t-0 px-4 align-middle text-xs font-medium text-gray-900 dark:text-white whitespace-nowrap p-4">5,649</td>
-                                 <td class="border-t-0 px-4 align-middle text-xs whitespace-nowrap p-4">
-                                    <div class="flex items-center">
-                                       <span class="mr-2 text-xs font-medium">30%</span>
-                                       <div class="relative w-full">
-                                          <div class="w-full bg-gray-200 rounded-sm h-2">
-                                             <div class="bg-cyan-600 h-2 rounded-sm" style={{width: "30%"}}></div>
-                                          </div>
-                                       </div>
-                                    </div>
-                                 </td>
-                              </tr>
-                              <tr class="text-gray-900 dark:text-white">
-                                 <th class="border-t-0 px-4 align-middle text-sm font-normal whitespace-nowrap p-4 text-left">Referral</th>
-                                 <td class="border-t-0 px-4 align-middle text-xs font-medium text-gray-900 dark:text-white whitespace-nowrap p-4">4,025</td>
-                                 <td class="border-t-0 px-4 align-middle text-xs whitespace-nowrap p-4">
-                                    <div class="flex items-center">
-                                       <span class="mr-2 text-xs font-medium">24%</span>
-                                       <div class="relative w-full">
-                                          <div class="w-full bg-gray-200 rounded-sm h-2">
-                                             <div class="bg-orange-300 h-2 rounded-sm" style={{width: "24%"}}></div>
-                                          </div>
-                                       </div>
-                                    </div>
-                                 </td>
-                              </tr>
-                              <tr class="text-gray-900 dark:text-white">
-                                 <th class="border-t-0 px-4 align-middle text-sm font-normal whitespace-nowrap p-4 text-left">Direct</th>
-                                 <td class="border-t-0 px-4 align-middle text-xs font-medium text-gray-900 dark:text-white whitespace-nowrap p-4">3,105</td>
-                                 <td class="border-t-0 px-4 align-middle text-xs whitespace-nowrap p-4">
-                                    <div class="flex items-center">
-                                       <span class="mr-2 text-xs font-medium">18%</span>
-                                       <div class="relative w-full">
-                                          <div class="w-full bg-gray-200 rounded-sm h-2">
-                                             <div class="bg-teal-400 h-2 rounded-sm" style={{width: "18%"}}></div>
-                                          </div>
-                                       </div>
-                                    </div>
-                                 </td>
-                              </tr>
-                              <tr class="text-gray-900 dark:text-white">
-                                 <th class="border-t-0 px-4 align-middle text-sm font-normal whitespace-nowrap p-4 text-left">Social</th>
-                                 <td class="border-t-0 px-4 align-middle text-xs font-medium text-gray-900 dark:text-white whitespace-nowrap p-4">1251</td>
-                                 <td class="border-t-0 px-4 align-middle text-xs whitespace-nowrap p-4">
-                                    <div class="flex items-center">
-                                       <span class="mr-2 text-xs font-medium">12%</span>
-                                       <div class="relative w-full">
-                                          <div class="w-full bg-gray-200 rounded-sm h-2">
-                                             <div class="bg-pink-600 h-2 rounded-sm" style={{width: "12%"}}></div>
-                                          </div>
-                                       </div>
-                                    </div>
-                                 </td>
-                              </tr>
-                              <tr class="text-gray-900 dark:text-white">
-                                 <th class="border-t-0 px-4 align-middle text-sm font-normal whitespace-nowrap p-4 text-left">Other</th>
-                                 <td class="border-t-0 px-4 align-middle text-xs font-medium text-gray-900 dark:text-white whitespace-nowrap p-4">734</td>
-                                 <td class="border-t-0 px-4 align-middle text-xs whitespace-nowrap p-4">
-                                    <div class="flex items-center">
-                                       <span class="mr-2 text-xs font-medium">9%</span>
-                                       <div class="relative w-full">
-                                          <div class="w-full bg-gray-200 rounded-sm h-2">
-                                             <div class="bg-indigo-600 h-2 rounded-sm" style={{width: "9%"}}></div>
-                                          </div>
-                                       </div>
-                                    </div>
-                                 </td>
-                              </tr>
-                              <tr class="text-gray-900 dark:text-white">
-                                 <th class="border-t-0 align-middle text-sm font-normal whitespace-nowrap p-4 pb-0 text-left">Email</th>
-                                 <td class="border-t-0 align-middle text-xs font-medium text-gray-900 dark:text-white whitespace-nowrap p-4 pb-0">456</td>
-                                 <td class="border-t-0 align-middle text-xs whitespace-nowrap p-4 pb-0">
-                                    <div class="flex items-center">
-                                       <span class="mr-2 text-xs font-medium">7%</span>
-                                       <div class="relative w-full">
-                                          <div class="w-full bg-gray-200 rounded-sm h-2">
-                                             <div class="bg-purple-500 h-2 rounded-sm" style={{width: "7%"}}></div>
-                                          </div>
-                                       </div>
-                                    </div>
-                                 </td>
-                              </tr>
-                           </tbody>
-                        </table>
-                     </div>
-                  </div>
-               </div>
+               
             </div>
          </main>
          <footer class="bg-white dark:bg-black md:flex md:items-center md:justify-between shadow rounded-lg p-4 md:p-6 xl:p-8 my-6 mx-4">
@@ -508,7 +351,7 @@ export default function Dashboard({parentState}){
             </div>
          </footer>
          <p class="text-center text-sm text-gray-900 dark:text-white my-10">
-            &copy; 2019-2021 <a href="#" class="hover:underline" target="_blank">Themesberg</a>. All rights reserved.
+            &copy; 2022-2023 <a href="#" class="hover:underline" target="_blank">Guardian WallETH</a>. All rights reserved.
          </p>
       </div>
    </div>
