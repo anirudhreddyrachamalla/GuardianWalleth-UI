@@ -103,11 +103,8 @@ export default function Header({updateParentState, parentState}){
     router.push(event.target.href)
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const account = accounts[0]
-<<<<<<< HEAD
     updateParentState({loggedIn: true, user: accounts[0], provider: provider});
-=======
-    setState({loggedIn: true, user: accounts[0], provider: provider});
->>>>>>> 6843fa115687d2703ea540200f88e9cc63d6698d
+
   }
 
   function notLoggedIn(){
@@ -375,11 +372,7 @@ export default function Header({updateParentState, parentState}){
       </Popover.Group>
       <div className="hidden items-center justify-end md:flex md:flex-1 lg:w-0">
         <p className="whitespace-nowrap text-base font-medium text-gray-500 hover:text-blue">
-<<<<<<< HEAD
           {parentState.user}
-=======
-          {state.user}
->>>>>>> 6843fa115687d2703ea540200f88e9cc63d6698d
         </p>
         <Link
           href="/"
@@ -486,10 +479,7 @@ export default function Header({updateParentState, parentState}){
       )
   }
 
-<<<<<<< HEAD
   return( parentState.loggedIn ? loggedIn() : notLoggedIn());
-=======
-  return( state.loggedIn ? loggedIn() : notLoggedIn());
->>>>>>> 6843fa115687d2703ea540200f88e9cc63d6698d
+
 }
 
