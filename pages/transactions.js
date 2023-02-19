@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import Header from './Header';
 
 function SearchInput() {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -32,7 +31,6 @@ function SearchInput() {
     <>
     
 <div class="fixed top-0 left-0 w-full h-full bg-gray-200 z-40 select-none">
-{/* <Header/> */}
     <div class="w-4/6 z-50 relative mx-auto mt-36">
     
     <div className="relative">
