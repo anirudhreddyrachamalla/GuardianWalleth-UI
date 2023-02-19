@@ -136,10 +136,6 @@ export default function Profile1() {
             </div>
           </div>
         </div>
-  
-        
-  
-      
       </>
     )
   }
