@@ -1,4 +1,3 @@
-import Header from "./Header";
 import illustration1 from '../public/undraw_digital_currency_qpak.svg'
 import illustration2 from '../public/undraw_vault_re_s4my.svg'
 import Image from "next/image";
@@ -6,7 +5,6 @@ import Image from "next/image";
 export default function Create(){
     return(
         <>
-        <Header />
         <div className="flex gap-x-4 p-10 text-center">
         <div className="card bg-blue shadow-xl m-auto mt-16 p-8">
         <Image src={illustration1} className="h-64"/>
