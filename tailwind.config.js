@@ -20,6 +20,7 @@ module.exports = {
       },
       colors:{
         'blue':'#0D99E9',
+        'brandColor': "#0D99E9"
       }
     },
   },

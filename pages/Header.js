@@ -109,17 +109,18 @@ export default function Header({updateParentState, parentState}){
 
   function notLoggedIn(){
       return(
-  <Popover className="relative bg-white dark:bg-black dark:bg-black dark:bg-black dark:bg-black dark:bg-black dark:bg-black">
+  <Popover className="fixed w-full z-10 h-24 bg-white dark:bg-black">
   <div className="mx-auto max-w-7xl px-6">
     <div className="flex items-center justify-between border-b-2 border-gray-100 py-6 md:justify-start md:space-x-10">
       <div className="flex justify-start lg:w-0 lg:flex-1">
         <a href="/">
-          <span className="sr-only">Your Company</span>
-          <img
+          <span className="sr-only">Guardian WallETH</span>
+          {/* <img
             className="h-8 w-auto sm:h-10"
             src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
             alt=""
-          />
+          /> */}
+          <span className="text-lg font-semibold">Guardian WallETH</span>
         </a>
       </div>
       <div className="-my-2 -mr-2 md:hidden">
