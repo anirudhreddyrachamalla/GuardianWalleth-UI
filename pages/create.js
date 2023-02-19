@@ -16,6 +16,7 @@ export default function Create(){
           <p></p>
           <div className="card-actions">
             <Link href="/profile1"><button className="btn bg-white text-blue">Create</button></Link>
+            <button className="btn bg-white text-blue">Create</button>
           </div>
         </div>
       </div>
@@ -26,6 +27,7 @@ export default function Create(){
           <p></p>
           <div className="card-actions">
             <Link href="/profile2"><button className="btn bg-white text-blue">Create</button></Link>
+            <button className="btn bg-white text-blue">Create</button>
           </div>
         </div>
       </div>
