@@ -1,11 +1,8 @@
-import Header from "./Header";
-
 export default function Dashboard(){
     return(
         <>
 <div>
    <nav class="bg-white dark:bg-black border-b border-gray-200 fixed z-30 w-full">
-    <Header/>
    </nav>
    <div class="flex overflow-hidden bg-white dark:bg-black pt-16">
       <aside id="sidebar" class="fixed hidden z-20 h-full top-0 left-0 pt-16 flex lg:flex flex-shrink-0 flex-col w-64 transition-width duration-75" aria-label="Sidebar">

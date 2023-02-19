@@ -1,4 +1,3 @@
-import Header from "./Header";
 import { useState } from "react";
 
 
@@ -24,7 +23,6 @@ export default function Profile1() {
     };
     return (
       <>
-      <Header/>
     <div className="mt-10 sm:mt-0 p-10">
           <div className="md:grid md:grid-cols-3 md:gap-6">
             <div className="md:col-span-1">
@@ -138,10 +136,6 @@ export default function Profile1() {
             </div>
           </div>
         </div>
-  
-        
-  
-      
       </>
     )
   }
