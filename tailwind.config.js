@@ -4,7 +4,6 @@ module.exports = {
     "./app/**/*.{js,ts,jsx,tsx}",
     "./pages/**/*.{js,ts,jsx,tsx}",
     "./components/**/*.{js,ts,jsx,tsx}",
- 
     // Or if using `src` directory:
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
@@ -20,6 +19,7 @@ module.exports = {
       },
       colors:{
         'blue':'#0D99E9',
+        'blue-gray':'#21262d',
       }
     },
   },
