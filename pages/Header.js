@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react'
+import { Fragment} from 'react'
 import {useTheme} from 'next-themes'
 import { Popover, Transition } from '@headlessui/react'
 import {
@@ -81,12 +81,12 @@ const recentPosts = [
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
-export default function Header(){
+export default function Header({updateParentState, parentState}){
   const {theme, setTheme} = useTheme()
-  const [state, setState] = useState({loggedIn: false, user: "", provider: null});//askAjay: can this state be defined outside of this function or should the useState hook should only be defined only inside function.
   const router = useRouter();
   async function logout(){
-    setState({loggedIn: false, user: "", provider: null});
+    updateParentState({loggedIn: false, user: "", provider: null});
+
   }
 
   async function connectToMetaMask(event) {
@@ -103,7 +103,8 @@ export default function Header(){
     router.push(event.target.href)
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const account = accounts[0]
-    setState({loggedIn: true, user: accounts[0], provider: provider});
+    updateParentState({loggedIn: true, user: accounts[0], provider: provider});
+
   }
 
   function notLoggedIn(){
@@ -371,7 +372,7 @@ export default function Header(){
       </Popover.Group>
       <div className="hidden items-center justify-end md:flex md:flex-1 lg:w-0">
         <p className="whitespace-nowrap text-base font-medium text-gray-500 hover:text-blue">
-          {state.user}
+          {parentState.user}
         </p>
         <Link
           href="/"
@@ -478,6 +479,7 @@ export default function Header(){
       )
   }
 
-  return( state.loggedIn ? loggedIn() : notLoggedIn());
+  return( parentState.loggedIn ? loggedIn() : notLoggedIn());
+
 }
 

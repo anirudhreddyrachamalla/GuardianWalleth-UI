@@ -2,7 +2,7 @@ import { useState } from "react";
 
 
 
-export default function Profile1() {
+export default function Profile1({parentState}) {
   const [people, setPeople] = useState([
     { id: 1, name: "Guradian 1" },
     { id: 2, name: "Guardian 2" },
